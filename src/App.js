@@ -13,12 +13,29 @@ function App() {
     e.preventDefault();
     const user = await login(username, password);
     setUser(user);
+    window.localStorage.setItem("loggedBlogListUser", JSON.stringify(user));
   };
 
-  useEffect(async () => {
-    const blogs = await getAll();
-    console.log("blogs ", blogs);
-    setBlogs(blogs);
+  const handleLogout = () => {
+    window.localStorage.removeItem("loggedBlogListUser");
+    setUser(null);
+  };
+
+  useEffect(() => {
+    const loggedUser = window.localStorage.getItem("loggedBlogListUser");
+    if (loggedUser) {
+      const user = JSON.parse(loggedUser);
+      setUser(user);
+    }
+  }, []);
+
+  useEffect(() => {
+    const asyncFetch = async () => {
+      const blogs = await getAll();
+      setBlogs(blogs);
+    };
+
+    asyncFetch();
   }, []);
 
   const loginForm = () => {
@@ -44,15 +61,13 @@ function App() {
     return (
       <div>
         <h1>Blogs</h1>
-        {user.name} logged in <button>logout</button>
+        {user.name} logged in <button onClick={handleLogout}>logout</button>
         {blogs.map(blog => (
           <Blog key={blog.id} blog={blog} />
         ))}
       </div>
     );
   };
-
-  console.log(user);
 
   return <div className="App">{!user ? loginForm() : userInfoAndBlogs()}</div>;
 }
