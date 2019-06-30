@@ -6,6 +6,7 @@ const BLogFrom = ({
   handleAuthorChange,
   handleUrlChange
 }) => {
+
   return (
     <form onSubmit={handleCreateBlog}>
       <div>
