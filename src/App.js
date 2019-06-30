@@ -95,7 +95,8 @@ function App() {
   useEffect(() => {
     const asyncFetch = async () => {
       const blogs = await getAll();
-      setBlogs(blogs);
+      const sorted = blogs.sort((a, b) => b.likes - a.likes);
+      setBlogs(blogs.sort((a, b) => a.likes < b.likes));
     };
 
     asyncFetch();
