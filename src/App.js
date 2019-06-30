@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Blog from "./components/Blog";
 import login from "./services/login";
-import { getAll, setToken, createBlog } from "./services/blogs";
+import { getAll, setToken, createBlog, likeBlog } from "./services/blogs";
 import BlogFrom from "./components/BlogForm";
 import Notification from "./components/Notification";
 import Togglable from "./components/Togglable";
@@ -20,11 +20,14 @@ function App() {
 
   const handleLogin = async e => {
     e.preventDefault();
-    const user = await login(username, password);
-
-    setToken(user.token);
-    setUser(user);
-    window.localStorage.setItem("loggedBlogListUser", JSON.stringify(user));
+    try {
+      const user = await login(username, password);
+      setToken(user.token);
+      setUser(user);
+      window.localStorage.setItem("loggedBlogListUser", JSON.stringify(user));
+    } catch (error) {
+      setNotification("Invalid credentials", "danger");
+    }
   };
 
   const handleLogout = () => {
@@ -72,6 +75,12 @@ function App() {
         setNotification({});
       }, 5000);
     }
+  };
+
+  const handleLikeBlog = async blog => {
+    const likedBlog = { ...blog, likes: (blog.likes += 1), user: blog.user.id };
+    const respone = await likeBlog(likedBlog);
+    setBlogs(blogs.map(b => (b.id === blog.id ? respone : b)));
   };
 
   useEffect(() => {
@@ -130,7 +139,7 @@ function App() {
         </Togglable>
         <div>
           {blogs.map(blog => (
-            <Blog key={blog.id} blog={blog} />
+            <Blog key={blog.id} blog={blog} handleLike={handleLikeBlog} />
           ))}
         </div>
       </div>
