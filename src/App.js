@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useField } from "./hooks/index";
 import Blog from "./components/Blog";
 import login from "./services/login";
 import {
@@ -13,21 +14,19 @@ import Notification from "./components/Notification";
 import Togglable from "./components/Togglable";
 
 function App() {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
+  const username = useField("text");
+  const password = useField("text");
   const [title, setTitle] = useState("");
   const [author, setAuthor] = useState("");
   const [url, setUrl] = useState("");
   const [user, setUser] = useState(null);
   const [blogs, setBlogs] = useState([]);
   const [notification, setNotification] = useState({});
-
   const blogFormRef = React.createRef();
-
   const handleLogin = async e => {
     e.preventDefault();
     try {
-      const user = await login(username, password);
+      const user = await login(username.value, password.value);
       setToken(user.token);
       setUser(user);
       window.localStorage.setItem("loggedBlogListUser", JSON.stringify(user));
@@ -121,11 +120,11 @@ function App() {
         <form onSubmit={handleLogin}>
           <div>
             <label>username</label>
-            <input onChange={({ target }) => setUsername(target.value)} />
+            <input {...username} />
           </div>
           <div>
             <label>password</label>
-            <input onChange={({ target }) => setPassword(target.value)} />
+            <input {...password} />
           </div>
           <button type="submit">login</button>
         </form>
