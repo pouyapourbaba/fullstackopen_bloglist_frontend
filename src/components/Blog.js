@@ -24,7 +24,7 @@ const Blog = ({ blog, user, handleLike, handleDelete }) => {
           {blog.author}
         </div>
       ) : (
-        <div>
+        <div className="infoWhenClicked">
           <span
             style={{ cursor: "pointer" }}
             onClick={() => setDetailsVisible(!detailsVisible)}
