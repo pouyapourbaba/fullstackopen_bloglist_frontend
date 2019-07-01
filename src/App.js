@@ -1,14 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { useField } from "./hooks/index";
+import { useField, useResource } from "./hooks/index";
 import Blog from "./components/Blog";
 import login from "./services/login";
-import {
-  getAll,
-  setToken,
-  createBlog,
-  likeBlog,
-  deleteBlog
-} from "./services/blogs";
 import BlogFrom from "./components/BlogForm";
 import Notification from "./components/Notification";
 import Togglable from "./components/Togglable";
@@ -19,15 +12,17 @@ function App() {
   const title = useField("text");
   const author = useField("text");
   const url = useField("text");
+  const [blogs, blogService] = useResource("/api/blogs");
   const [user, setUser] = useState(null);
-  const [blogs, setBlogs] = useState([]);
   const [notification, setNotification] = useState({});
   const blogFormRef = React.createRef();
+
   const handleLogin = async e => {
     e.preventDefault();
     try {
       const user = await login(username.value, password.value);
-      setToken(user.token);
+      blogService.setToken(user.token);
+
       setUser(user);
       username.onReset();
       password.onReset();
@@ -51,9 +46,9 @@ function App() {
       author: author.value,
       url: url.value
     };
+
     try {
-      const response = await createBlog(blog);
-      setBlogs([...blogs, response]);
+      await blogService.create(blog);
 
       title.onReset();
       author.onReset();
@@ -78,35 +73,13 @@ function App() {
     }
   };
 
-  const handleLikeBlog = async blog => {
-    const likedBlog = { ...blog, likes: (blog.likes += 1), user: blog.user.id };
-    const respone = await likeBlog(likedBlog);
-    setBlogs(blogs.map(b => (b.id === blog.id ? respone : b)));
-  };
-
-  const handleDeleteBlog = async blog => {
-    if (window.confirm(`remove blog ${blog.title} by ${blog.author}`)) {
-      await deleteBlog(blog);
-      setBlogs(blogs.filter(b => b.id !== blog.id));
-    }
-  };
-
   useEffect(() => {
     const loggedUser = window.localStorage.getItem("loggedBlogListUser");
     if (loggedUser) {
       const user = JSON.parse(loggedUser);
       setUser(user);
-      setToken(user.token);
+      blogService.setToken(user.token);
     }
-  }, []);
-
-  useEffect(() => {
-    const asyncFetch = async () => {
-      const blogs = await getAll();
-      setBlogs(blogs.sort((a, b) => b.likes - a.likes));
-    };
-
-    asyncFetch();
   }, []);
 
   const loginForm = () => {
@@ -151,8 +124,8 @@ function App() {
               key={blog.id}
               blog={blog}
               user={user}
-              handleLike={handleLikeBlog}
-              handleDelete={handleDeleteBlog}
+              handleLike={blogService.likeResource}
+              handleDelete={blogService.deleteRecource}
             />
           ))}
         </div>

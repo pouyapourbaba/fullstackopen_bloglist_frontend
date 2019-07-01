@@ -12,36 +12,34 @@ export const getAll = async () => {
   return response.data;
 };
 
-export const createBlog = async blog => {
+export const createBlog = async newObject => {
   const config = {
     headers: {
       Authorization: token
     }
   };
 
-  const response = await axios.post(baseUrl, blog, config);
+  const response = await axios.post(baseUrl, newObject, config);
   return response.data;
 };
 
-export const likeBlog = async blog => {
+export const likeBlog = async newObject => {
   const config = {
     headers: {
       Authorization: token
     }
   };
 
-  const response = await axios.put(`${baseUrl}/${blog.id}`, blog, config);
+  const response = await axios.put(`${baseUrl}/${newObject.id}`, newObject, config);
   return response.data;
 };
 
-export const deleteBlog = async blog => {
+export const deleteBlog = async newObject => {
   const config = {
     headers: {
       Authorization: token
     }
   };
 
-  await axios.delete(`${baseUrl}/${blog.id}`, config);
+  await axios.delete(`${baseUrl}/${newObject.id}`, config);
 };
-
-export default { getAll, setToken };
