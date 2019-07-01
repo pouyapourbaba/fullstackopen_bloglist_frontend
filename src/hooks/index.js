@@ -7,9 +7,9 @@ export const useField = type => {
     setVlaue(e.target.value);
   };
 
-  const reset = () => {
+  const onReset = () => {
     setVlaue("");
   };
 
-  return { type, value, onChange, reset };
+  return { type, value, onChange, onReset };
 };

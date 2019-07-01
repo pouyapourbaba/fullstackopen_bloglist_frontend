@@ -29,8 +29,8 @@ function App() {
       const user = await login(username.value, password.value);
       setToken(user.token);
       setUser(user);
-      username.reset();
-      password.reset();
+      username.onReset();
+      password.onReset();
       window.localStorage.setItem("loggedBlogListUser", JSON.stringify(user));
     } catch (error) {
       setNotification("Invalid credentials", "danger");
@@ -55,9 +55,9 @@ function App() {
       const response = await createBlog(blog);
       setBlogs([...blogs, response]);
 
-      title.reset();
-      author.reset();
-      title.reset();
+      title.onReset();
+      author.onReset();
+      url.onReset();
 
       setNotification({
         message: `a new blog ${blog.title} by ${blog.author} added`,
