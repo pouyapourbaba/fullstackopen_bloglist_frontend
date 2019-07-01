@@ -1,25 +1,19 @@
 import React from "react";
 
-const BLogFrom = ({
-  handleCreateBlog,
-  handleTitleChange,
-  handleAuthorChange,
-  handleUrlChange
-}) => {
-
+const BLogFrom = ({ handleCreateBlog, title, author, url }) => {
   return (
     <form onSubmit={handleCreateBlog}>
       <div>
         <label>title:</label>
-        <input onChange={handleTitleChange} />
+        <input {...title} />
       </div>
       <div>
         <label>author:</label>
-        <input onChange={handleAuthorChange} />
+        <input {...author} />
       </div>
       <div>
         <label>url:</label>
-        <input onChange={handleUrlChange} />
+        <input {...url} />
       </div>
       <button onClick={handleCreateBlog}>create</button>
     </form>

@@ -16,9 +16,9 @@ import Togglable from "./components/Togglable";
 function App() {
   const username = useField("text");
   const password = useField("text");
-  const [title, setTitle] = useState("");
-  const [author, setAuthor] = useState("");
-  const [url, setUrl] = useState("");
+  const title = useField("text");
+  const author = useField("text");
+  const url = useField("text");
   const [user, setUser] = useState(null);
   const [blogs, setBlogs] = useState([]);
   const [notification, setNotification] = useState({});
@@ -29,6 +29,8 @@ function App() {
       const user = await login(username.value, password.value);
       setToken(user.token);
       setUser(user);
+      username.reset();
+      password.reset();
       window.localStorage.setItem("loggedBlogListUser", JSON.stringify(user));
     } catch (error) {
       setNotification("Invalid credentials", "danger");
@@ -40,28 +42,22 @@ function App() {
     setUser(null);
   };
 
-  const handleTitleChange = e => {
-    setTitle(e.target.value);
-  };
-  const handleAuthorChange = e => {
-    setAuthor(e.target.value);
-  };
-  const handleUrlChange = e => {
-    setUrl(e.target.value);
-  };
-
   const handleCreateBlog = async e => {
     e.preventDefault();
     blogFormRef.current.toggleVisibility();
 
     const blog = {
-      title,
-      author,
-      url
+      title: title.value,
+      author: author.value,
+      url: url.value
     };
     try {
       const response = await createBlog(blog);
       setBlogs([...blogs, response]);
+
+      title.reset();
+      author.reset();
+      title.reset();
 
       setNotification({
         message: `a new blog ${blog.title} by ${blog.author} added`,
@@ -143,9 +139,9 @@ function App() {
             <h2>create new</h2>
             <BlogFrom
               handleCreateBlog={handleCreateBlog}
-              handleAuthorChange={handleAuthorChange}
-              handleTitleChange={handleTitleChange}
-              handleUrlChange={handleUrlChange}
+              author={author}
+              title={title}
+              url={url}
             />
           </div>
         </Togglable>
