@@ -1,7 +1,13 @@
 import React, { useState, useEffect } from "react";
 import Blog from "./components/Blog";
 import login from "./services/login";
-import { getAll, setToken, createBlog, likeBlog } from "./services/blogs";
+import {
+  getAll,
+  setToken,
+  createBlog,
+  likeBlog,
+  deleteBlog
+} from "./services/blogs";
 import BlogFrom from "./components/BlogForm";
 import Notification from "./components/Notification";
 import Togglable from "./components/Togglable";
@@ -59,7 +65,7 @@ function App() {
       setBlogs([...blogs, response]);
 
       setNotification({
-        message: `a new blog You're NOT gonna need it! by ${blog.author} added`,
+        message: `a new blog ${blog.title} by ${blog.author} added`,
         type: "success"
       });
 
@@ -83,6 +89,13 @@ function App() {
     setBlogs(blogs.map(b => (b.id === blog.id ? respone : b)));
   };
 
+  const handleDeleteBlog = async blog => {
+    if (window.confirm(`remove blog ${blog.title} by ${blog.author}`)) {
+      await deleteBlog(blog);
+      setBlogs(blogs.filter(b => b.id !== blog.id));
+    }
+  };
+
   useEffect(() => {
     const loggedUser = window.localStorage.getItem("loggedBlogListUser");
     if (loggedUser) {
@@ -95,8 +108,7 @@ function App() {
   useEffect(() => {
     const asyncFetch = async () => {
       const blogs = await getAll();
-      const sorted = blogs.sort((a, b) => b.likes - a.likes);
-      setBlogs(blogs.sort((a, b) => a.likes < b.likes));
+      setBlogs(blogs.sort((a, b) => b.likes - a.likes));
     };
 
     asyncFetch();
@@ -140,7 +152,13 @@ function App() {
         </Togglable>
         <div>
           {blogs.map(blog => (
-            <Blog key={blog.id} blog={blog} handleLike={handleLikeBlog} />
+            <Blog
+              key={blog.id}
+              blog={blog}
+              user={user}
+              handleLike={handleLikeBlog}
+              handleDelete={handleDeleteBlog}
+            />
           ))}
         </div>
       </div>

@@ -1,7 +1,6 @@
 import React, { useState } from "react";
-import { likeBlog } from "../services/blogs";
 
-const Blog = ({ blog, handleLike }) => {
+const Blog = ({ blog, user, handleLike, handleDelete }) => {
   const [detailsVisible, setDetailsVisible] = useState(false);
 
   const blogStyle = {
@@ -11,8 +10,6 @@ const Blog = ({ blog, handleLike }) => {
     borderWidth: 1,
     marginBottom: 5
   };
-
-  
 
   return (
     <div style={blogStyle}>
@@ -45,6 +42,10 @@ const Blog = ({ blog, handleLike }) => {
           </span>
           <br />
           <span>added by {blog.user.name}</span>
+          <br />
+          {user.id === blog.user.id && (
+            <button onClick={() => handleDelete(blog)}>remove</button>
+          )}
         </div>
       )}
     </div>
